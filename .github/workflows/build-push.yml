@@ -1,0 +1,94 @@
+name: Build and Push to Sakura Cloud Container Registry
+
+on:
+  workflow_call:
+    inputs:
+      registry-name:
+        description: 'Sakura Cloud Container Registry name (e.g., your-registry.sakuracr.jp)'
+        required: true
+        type: string
+      image-name:
+        description: 'Image name (default: repository name)'
+        required: false
+        type: string
+        default: ''
+      context:
+        description: 'Build context path'
+        required: false
+        type: string
+        default: '.'
+      dockerfile:
+        description: 'Path to Dockerfile'
+        required: false
+        type: string
+        default: './Dockerfile'
+      platforms:
+        description: 'Target platforms (e.g., linux/amd64,linux/arm64)'
+        required: false
+        type: string
+        default: 'linux/amd64'
+      cache-from-type:
+        description: 'Cache source type'
+        required: false
+        type: string
+        default: 'gha'
+      cache-to-type:
+        description: 'Cache destination type'
+        required: false
+        type: string
+        default: 'gha'
+      cache-to-mode:
+        description: 'Cache mode (min or max)'
+        required: false
+        type: string
+        default: 'max'
+      runs-on:
+        description: 'Runner to use'
+        required: false
+        type: string
+        default: 'ubuntu-latest'
+      build-args:
+        description: 'Build arguments (multiline)'
+        required: false
+        type: string
+        default: ''
+    secrets:
+      registry-username:
+        description: 'Sakura Cloud Container Registry username'
+        required: true
+      registry-password:
+        description: 'Sakura Cloud Container Registry password'
+        required: true
+
+jobs:
+  build-and-push:
+    runs-on: ${{ inputs.runs-on }}
+    
+    permissions:
+      contents: read
+      
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+
+      - name: Login to Sakura Cloud Container Registry
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        with:
+          registry: ${{ inputs.registry-name }}
+          username: ${{ secrets.registry-username }}
+          password: ${{ secrets.registry-password }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.dockerfile }}
+          platforms: ${{ inputs.platforms }}
+          push: true
+          tags: ${{ inputs.registry-name }}/${{ inputs.image-name || github.repository }}:${{ github.ref_name }}
+          cache-from: type=${{ inputs.cache-from-type }}
+          cache-to: type=${{ inputs.cache-to-type }},mode=${{ inputs.cache-to-mode }}
+          build-args: ${{ inputs.build-args }}
