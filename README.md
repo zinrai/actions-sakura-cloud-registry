@@ -1,4 +1,4 @@
-# Sakura Cloud Container Registry Action
+# actions-sakura-cloud-registry
 
 A reusable GitHub Actions workflow for building and pushing Docker images to [Sakura Cloud Container Registry](https://manual.sakura.ad.jp/cloud/appliance/container-registry/).
 
@@ -25,7 +25,7 @@ on:
 
 jobs:
   release:
-    uses: zinrai/sakura-cloud-registry-action/.github/workflows/build-push.yml@v1
+    uses: zinrai/actions-sakura-cloud-registry/.github/workflows/build-push.yml@v1
     with:
       registry-name: your-registry.sakuracr.jp
     secrets:
@@ -73,7 +73,7 @@ Your image will be pushed as `your-registry.sakuracr.jp/owner/repo:v1.0.0`.
 ```yaml
 jobs:
   release:
-    uses: zinrai/sakura-cloud-registry-action/.github/workflows/build-push.yml@v1
+    uses: zinrai/actions-sakura-cloud-registry/.github/workflows/build-push.yml@v1
     with:
       registry-name: your-registry.sakuracr.jp
       image-name: my-custom-app
@@ -101,7 +101,7 @@ jobs:
 ```yaml
 jobs:
   release:
-    uses: zinrai/sakura-cloud-registry-action/.github/workflows/build-push.yml@v1
+    uses: zinrai/actions-sakura-cloud-registry/.github/workflows/build-push.yml@v1
     with:
       registry-name: your-registry.sakuracr.jp
       build-args: |
@@ -117,7 +117,7 @@ jobs:
 ```yaml
 jobs:
   release:
-    uses: zinrai/sakura-cloud-registry-action/.github/workflows/build-push.yml@v1
+    uses: zinrai/actions-sakura-cloud-registry/.github/workflows/build-push.yml@v1
     with:
       registry-name: your-registry.sakuracr.jp
       runs-on: '["self-hosted", "linux", "x64"]'
