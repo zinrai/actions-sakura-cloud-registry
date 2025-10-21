@@ -46,7 +46,7 @@ on:
         description: 'Runner to use'
         required: false
         type: string
-        default: 'ubuntu-latest'
+        default: '["ubuntu-latest"]'
       build-args:
         description: 'Build arguments (multiline)'
         required: false
@@ -62,7 +62,7 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ${{ inputs.runs-on }}
+    runs-on: ${{ fromJSON(inputs.runs-on) }}
     
     permissions:
       contents: read
